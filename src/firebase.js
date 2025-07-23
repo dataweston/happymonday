@@ -4,12 +4,12 @@ import { getFirestore } from "firebase/firestore";
 // Your web app's Firebase configuration
 // Replace these with your actual Firebase config values from Firebase Console
 const firebaseConfig = {
-  apiKey: "your-api-key-here",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456",
+  apiKey: "AIzaSyAKioIlcJTtE_EgK_GI97pYYnogxtjooGE",
+  authDomain: "happy-monday-f55dc.firebaseapp.com",
+  projectId: "happy-monday-f55dc",
+  storageBucket: "happy-monday-f55dc.firebasestorage.app",
+  messagingSenderId: "1073020785319",
+  appId: "1:1073020785319:web:4c0ebe1a39f979b6af8182"
 };
 
 // Initialize Firebase
