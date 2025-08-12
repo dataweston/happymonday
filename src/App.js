@@ -9,6 +9,7 @@ import {
   Clock,
   DollarSign,
   MessageSquare,
+  ClipboardList, // New Icon
 } from "lucide-react";
 import { db } from "./firebase";
 import {
@@ -20,6 +21,7 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
+import CostingWorksheet from "./CostingWorksheet"; // Import the new component
 
 const App = () => {
   // Items for sale
@@ -239,6 +241,18 @@ const App = () => {
             >
               <FileText size={20} />
               Past Orders
+            </button>
+            {/* New Button for Costing Worksheet */}
+            <button
+              onClick={() => setCurrentView("costing")}
+              className={`px-6 py-3 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                currentView === "costing"
+                  ? "bg-blue-500 text-white shadow-md"
+                  : "text-slate-600 hover:text-blue-500"
+              }`}
+            >
+              <ClipboardList size={20} />
+              Costing
             </button>
           </div>
         </div>
@@ -568,6 +582,9 @@ const App = () => {
             </div>
           </div>
         )}
+
+        {/* New View for Costing Worksheet */}
+        {currentView === "costing" && <CostingWorksheet items={items} />}
       </div>
     </div>
   );
