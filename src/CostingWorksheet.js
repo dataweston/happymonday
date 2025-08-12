@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { DollarSign, Plus, Trash2 } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { DollarSign, Plus, Trash2, Save, Download } from "lucide-react";
+import { db } from "./firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 const CostingWorksheet = ({ items }) => {
   const [costs, setCosts] = useState(
@@ -17,6 +19,48 @@ const CostingWorksheet = ({ items }) => {
       return acc;
     }, {})
   );
+  const [loading, setLoading] = useState(false);
+
+  const costDocRef = doc(db, "costing", "worksheet");
+
+  const loadCosts = async () => {
+    setLoading(true);
+    try {
+      const docSnap = await getDoc(costDocRef);
+      if (docSnap.exists()) {
+        const savedCosts = docSnap.data();
+        // Merge saved costs with initial state to handle new items
+        const mergedCosts = items.reduce((acc, item) => {
+          acc[item.id] = {
+            ...costs[item.id], // Start with default structure
+            ...(savedCosts[item.id] || {}), // Overwrite with saved data
+          };
+          return acc;
+        }, {});
+        setCosts(mergedCosts);
+      }
+    } catch (error) {
+      console.error("Error loading costs:", error);
+      alert("Error loading costs. Please check the console for details.");
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadCosts();
+  }, []); // Runs once on component mount
+
+  const saveCosts = async () => {
+    setLoading(true);
+    try {
+      await setDoc(costDocRef, costs);
+      alert("Costs saved successfully!");
+    } catch (error) {
+      console.error("Error saving costs:", error);
+      alert("Error saving costs. Please try again.");
+    }
+    setLoading(false);
+  };
 
   const handleCostChange = (itemId, field, value, customIndex = null) => {
     const newCosts = { ...costs };
@@ -30,6 +74,9 @@ const CostingWorksheet = ({ items }) => {
 
   const addCustomIngredient = (itemId) => {
     const newCosts = { ...costs };
+    if (!newCosts[itemId].custom) {
+        newCosts[itemId].custom = [];
+    }
     newCosts[itemId].custom.push({ name: "", cost: 0 });
     setCosts(newCosts);
   };
@@ -42,18 +89,19 @@ const CostingWorksheet = ({ items }) => {
 
   const calculateTotalCost = (itemId) => {
     const itemCosts = costs[itemId];
-    const customCosts = itemCosts.custom.reduce(
-      (total, ing) => total + ing.cost,
+    if (!itemCosts) return 0;
+    const customCosts = (itemCosts.custom || []).reduce(
+      (total, ing) => total + (parseFloat(ing.cost) || 0),
       0
     );
     return (
-      itemCosts.flour +
-      itemCosts.meat +
-      itemCosts.vegetables +
-      itemCosts.dairy +
-      itemCosts.otherToppings +
-      itemCosts.packaging +
-      itemCosts.label +
+      (itemCosts.flour || 0) +
+      (itemCosts.meat || 0) +
+      (itemCosts.vegetables || 0) +
+      (itemCosts.dairy || 0) +
+      (itemCosts.otherToppings || 0) +
+      (itemCosts.packaging || 0) +
+      (itemCosts.label || 0) +
       customCosts
     );
   };
@@ -96,11 +144,12 @@ const CostingWorksheet = ({ items }) => {
           <input
             type="number"
             step="0.01"
-            value={costs[item.id][field.name] || ""}
+            value={costs[item.id]?.[field.name] || ""}
             onChange={(e) =>
               handleCostChange(item.id, field.name, e.target.value)
             }
             className="w-full pl-8 pr-2 py-1 border border-slate-300 rounded-md"
+            disabled={loading}
           />
         </div>
       </div>
@@ -109,14 +158,35 @@ const CostingWorksheet = ({ items }) => {
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-6">
-      <h2 className="text-2xl font-bold text-slate-800 mb-6">
-        Costing Worksheet
-      </h2>
-      <div className="grid md:grid-cols-2 gap-6">
+        <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-slate-800">
+                Costing Worksheet
+            </h2>
+            <div className="flex gap-2">
+                 <button
+                    onClick={loadCosts}
+                    disabled={loading}
+                    className="px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 bg-slate-500 hover:bg-slate-600 text-white"
+                >
+                    <Download size={18} />
+                    {loading ? "Loading..." : "Reload Costs"}
+                </button>
+                <button
+                    onClick={saveCosts}
+                    disabled={loading}
+                    className="px-4 py-2 rounded-lg font-medium transition-all flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                    <Save size={18} />
+                    {loading ? "Saving..." : "Save Costs"}
+                </button>
+            </div>
+        </div>
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item) => (
           <div
             key={item.id}
-            className="p-4 border border-slate-200 rounded-xl"
+            className={`p-4 border border-slate-200 rounded-xl ${loading ? 'bg-slate-50 opacity-50' : ''}`}
           >
             <h3 className="font-semibold text-slate-800 text-lg mb-2">
               {item.name}
@@ -125,7 +195,7 @@ const CostingWorksheet = ({ items }) => {
               {renderCostFields(item)}
 
               {/* Custom Ingredients */}
-              {costs[item.id].custom.map((customIng, index) => (
+              {(costs[item.id]?.custom || []).map((customIng, index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <input
                     type="text"
@@ -140,6 +210,7 @@ const CostingWorksheet = ({ items }) => {
                       )
                     }
                     className="w-1/2 px-2 py-1 border border-slate-300 rounded-md"
+                    disabled={loading}
                   />
                   <div className="w-1/2 relative flex items-center">
                     <DollarSign
@@ -160,10 +231,12 @@ const CostingWorksheet = ({ items }) => {
                         )
                       }
                       className="w-full pl-8 pr-2 py-1 border border-slate-300 rounded-md"
+                      disabled={loading}
                     />
                     <button
                       onClick={() => removeCustomIngredient(item.id, index)}
                       className="ml-2 text-red-500 hover:text-red-700"
+                      disabled={loading}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -174,6 +247,7 @@ const CostingWorksheet = ({ items }) => {
               <button
                 onClick={() => addCustomIngredient(item.id)}
                 className="text-sm text-blue-500 hover:text-blue-700 flex items-center gap-1"
+                disabled={loading}
               >
                 <Plus size={14} /> Add Custom Ingredient
               </button>
