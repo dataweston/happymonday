@@ -27,26 +27,26 @@ const App = () => {
   // Items for sale
   const [items] = useState([
     // Sandwiches
-    { id: 1, name: "Egg Salad Sandwich", price: 5.0, category: "Sandwiches" },
-    { id: 2, name: "Turkey Breast", price: 6.0, category: "Sandwiches" },
-    { id: 3, name: "Roast Beef", price: 7.0, category: "Sandwiches" },
-    { id: 4, name: "Pastrami", price: 7.0, category: "Sandwiches" },
-    { id: 5, name: "Mortadella", price: 7.0, category: "Sandwiches" },
-    { id: 6, name: "Vegetable", price: 6.0, category: "Sandwiches" },
+    { id: 1, name: "Egg Salad Sandwich", price: 5.1, category: "Sandwiches" },
+    { id: 2, name: "Turkey Breast", price: 6.1, category: "Sandwiches" },
+    { id: 3, name: "Roast Beef", price: 7.1, category: "Sandwiches" },
+    { id: 4, name: "Pastrami", price: 7.1, category: "Sandwiches" },
+    { id: 5, name: "Mortadella", price: 7.1, category: "Sandwiches" },
+    { id: 6, name: "Vegetable", price: 6.1, category: "Sandwiches" },
 
     // Pizza
-    { id: 7, name: '12" Cheese', price: 7.0, category: "Pizza" },
-    { id: 8, name: '4" Cheese', price: 3.5, category: "Pizza" },
-    { id: 9, name: '12" Pepperoni', price: 8.0, category: "Pizza" },
-    { id: 10, name: '12" Seasonal', price: 8.0, category: "Pizza" },
-    { id: 11, name: '12" Gluten Free', price: 8.0, category: "Pizza" },
+    { id: 7, name: '12" Cheese', price: 7.1, category: "Pizza" },
+    { id: 8, name: '4" Cheese', price: 3.6, category: "Pizza" },
+    { id: 9, name: '12" Pepperoni', price: 8.1, category: "Pizza" },
+    { id: 10, name: '12" Seasonal', price: 8.1, category: "Pizza" },
+    { id: 11, name: '12" Gluten Free', price: 8.1, category: "Pizza" },
 
     // Salads
-    { id: 12, name: "Beet Salad", price: 5.0, category: "Salads" },
+    { id: 12, name: "Beet Salad", price: 5.1, category: "Salads" },
     {
       id: 13,
       name: "Pasta Salad (gluten free)",
-      price: 3.0,
+      price: 3.1,
       category: "Salads",
     },
 
@@ -54,20 +54,20 @@ const App = () => {
     {
       id: 14,
       name: "Yogurt & Granola (gluten free)",
-      price: 3.0,
+      price: 3.1,
       category: "Breakfast",
     },
     {
       id: 15,
       name: "Yogurt & Granola with chocolate (gluten free)",
-      price: 4.0,
+      price: 4.1,
       category: "Breakfast",
     },
-    { id: 16, name: "Chia Pudding", price: 3.0, category: "Breakfast" },
+    { id: 16, name: "Chia Pudding", price: 3.1, category: "Breakfast" },
     {
       id: 17,
       name: "Chia Pudding (dairy free)",
-      price: 4.0,
+      price: 4.1,
       category: "Breakfast",
     },
   ]);
