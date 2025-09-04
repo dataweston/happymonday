@@ -21,7 +21,7 @@ import {
   updateDoc,
   doc,
 } from "firebase/firestore";
-import CostingWorksheet from "./CostingWorksheet.js?jsx"; // Import the new component (ensure JSX parsing)
+import CostingWorksheet from "./CostingWorksheet.jsx"; // Import the new component
 
 const App = () => {
   // Items for sale
@@ -152,7 +152,7 @@ const App = () => {
         orderNumber: `ORD-${Date.now()}`,
       };
 
-      const docRef = await addDoc(collection(db, "orders"), orderData);
+      await addDoc(collection(db, "orders"), orderData);
 
       // Reset form
       setCart({});
